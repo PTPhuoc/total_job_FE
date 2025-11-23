@@ -1,0 +1,65 @@
+"use client";
+
+import { logout } from "@/app/store/slices/userSlice";
+import { setWeb } from "@/app/store/slices/webSlice";
+import Link from "next/link";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+
+export default function AdminLayout({ children }) {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setWeb({ load: false }));
+  }, []);
+  return (
+    <div className="w-full h-screen pt-[100px] flex min-w-0">
+      <div className="flex-2 flex flex-col items-center gap-1 bg-zinc-300">
+        <div className="w-full h-[100px] flex justify-center items-center bg-white font-bold">
+          <p>Admin Mode</p>
+        </div>
+        <Link
+          href={"/admin/jobs"}
+          className="w-full p-5 bg-[#01215C] text-white border-y-2 border-[#01215C] scale-100 duration-200 ease-in hover:bg-white hover:text-[#01215C] active:scale-95"
+        >
+          Danh sách việc làm
+        </Link>
+        <Link
+          href={"/admin/companys"}
+          className="w-full p-5 bg-[#01215C] text-white border-y-2 border-[#01215C] scale-100 duration-200 ease-in hover:bg-white hover:text-[#01215C] active:scale-95"
+        >
+          Danh sách công ty
+        </Link>
+        <Link
+          href={"/admin/users"}
+          className="w-full p-5 bg-[#01215C] text-white border-y-2 border-[#01215C] scale-100 duration-200 ease-in hover:bg-white hover:text-[#01215C] active:scale-95"
+        >
+          Danh sách người dùng
+        </Link>
+        <Link
+          href={"/admin/catalogs"}
+          className="w-full p-5 bg-[#01215C] text-white border-y-2 border-[#01215C] scale-100 duration-200 ease-in hover:bg-white hover:text-[#01215C] active:scale-95"
+        >
+          Danh sách danh mục
+        </Link>
+        <Link
+          href={"/admin/options"}
+          className="w-full p-5 bg-[#01215C] text-white border-y-2 border-[#01215C] scale-100 duration-200 ease-in hover:bg-white hover:text-[#01215C] active:scale-95"
+        >
+          Lấy dữ liệu
+        </Link>
+        <Link
+          href={"/signin"}
+          className="w-full p-5 bg-red-500 text-white border-y-2 border-red-500 scale-100 duration-200 ease-in hover:bg-white hover:text-red-500 active:scale-95"
+          onClick={() => {
+            dispatch(logout());
+            dispatch(setWeb({ load: true }));
+          }}
+        >
+          Đăng xuất
+        </Link>
+      </div>
+      <div className="w-1 h-full bg-[#01215C]"></div>
+      <div className="flex-8 min-w-0 bg-zinc-100">{children}</div>
+    </div>
+  );
+}
