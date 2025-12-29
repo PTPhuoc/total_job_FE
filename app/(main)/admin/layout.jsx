@@ -3,14 +3,23 @@
 import { logout } from "@/app/store/slices/userSlice";
 import { setWeb } from "@/app/store/slices/webSlice";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function AdminLayout({ children }) {
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const route = useRouter();
+
   useEffect(() => {
-    dispatch(setWeb({ load: false }));
+    if (!user.role || user.role !== "Admin") {
+      route.push("/");
+    } else {
+      dispatch(setWeb({ load: false }));
+    }
   }, []);
+
   return (
     <div className="w-full h-screen pt-[100px] flex min-w-0">
       <div className="flex-2 flex flex-col items-center gap-1 bg-zinc-300">

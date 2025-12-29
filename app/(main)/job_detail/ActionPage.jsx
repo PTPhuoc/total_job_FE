@@ -28,7 +28,8 @@ export default function ActionPage({
   const [job, setJob] = useState(jobInfo);
   const [desc, setDesc] = useState(jobDesc);
   const [applyValue, setApplyValue] = useState({
-    id: checkApply,
+    id: checkApply.id ?? "",
+    status: checkApply.status ?? "",
     decryption: "",
   });
   const [isOpen, setIsOpen] = useState({
@@ -177,12 +178,22 @@ export default function ActionPage({
     return axios
       .post(
         `${process.env.NEXT_PUBLIC_SERVER_PORT}api/account/apply_job/`,
-        { applyValue: { ...applyValue }, id: job.id },
+        {
+          applyValue: {
+            ...applyValue,
+            id: applyValue.status !== "pending" ? "" : applyValue.id,
+          },
+          id: job.id,
+        },
         { withCredentials: true }
       )
       .then((rs) => {
         if (rs.data.status === "Success") {
-          setApplyValue({ ...applyValue, id: rs.data.newApply.id });
+          setApplyValue({
+            ...applyValue,
+            id: rs.data.newApply.id,
+            status: rs.data.newApply.status,
+          });
           setIsOpen({ ...isOpen, applyJob: false });
         } else {
           dispatch(
@@ -244,20 +255,21 @@ export default function ActionPage({
 
   return (
     <div className="pt-[100px] flex flex-col w-full items-center">
-      <div className="relative w-4/5 max-h-[800px] flex gap-5 py-5">
+      <div className="relative w-4/5 h-[820px] flex gap-5 py-5">
         {isOpen.applyJob && (
           <div className="absolute top-0 flex justify-center items-center w-full h-full  z-1">
-            <div className="w-1/2 h-4/5 p-5 flex flex-col gap-3 bg-zinc-100 rounded-2xl shadow-basic">
+            <div className="w-1/2 h-4/5 flex flex-col gap-3 bg-zinc-100 rounded-2xl overflow-hidden shadow-basic">
+              <p className="p-5 text-white font-bold bg-[#009DFF]">Ứng tuyển</p>
               <textarea
                 name="decrytion"
-                className="flex-1 bg-white rounded-lg border-2 border-[#01215C] p-5"
+                className="flex-1 bg-white rounded-lg border-2 border-[#01215C] p-5 mx-5"
                 placeholder="Mô tả đơn tuyển dụng"
                 value={applyValue.decryption}
                 onChange={(e) =>
                   setApplyValue({ ...applyValue, decryption: e.target.value })
                 }
               ></textarea>
-              <div className="flex items-center gap-5">
+              <div className="flex items-center gap-5 px-5 pb-5">
                 <button
                   className="flex-1 py-1 bg-red-500 border-2 border-red-500 text-white rounded-lg duration-200 ease-in hover:bg-white hover:text-red-500"
                   onClick={() => {
@@ -268,7 +280,7 @@ export default function ActionPage({
                 </button>
                 <ButtonDefault
                   classNameButton="flex-1 py-1 bg-[#01215C] border-2 border-[#01215C] text-white rounded-lg duration-200 ease-in hover:bg-white hover:text-[#01215C]"
-                  classNameWait="flex-1 py-1"
+                  classNameWait="flex-1 py-1 bg-white border-2 border-[#01215C] rounded-lg duration-200 ease-in"
                   textButton={"Nộp đơn ứng tuyển"}
                   handleApi={() => {
                     return applyJob();
@@ -381,9 +393,14 @@ export default function ActionPage({
                   />
                   {job.sourceName === "FUJobs" && (
                     <button
-                      className="px-5 py-1 bg-[#01215C] border-2 border-[#01215C] rounded-lg text-white duration-200 ease-in hover:bg-white hover:text-[#01215C]"
+                      className={
+                        ["pending", ""].includes(applyValue.status)
+                          ? "px-5 py-1 bg-[#01215C] border-2 border-[#01215C] rounded-lg text-white duration-200 ease-in hover:bg-white hover:text-[#01215C]"
+                          : "px-5 py-1 bg-zinc-500 border-2 border-zinc-500 rounded-lg text-white duration-200 ease-in"
+                      }
+                      disabled={!["pending", ""].includes(applyValue.status)}
                       onClick={() => {
-                        if (applyValue.id) {
+                        if (applyValue.id && applyValue.status === "pending") {
                           dispatch(
                             setWindowWarning({
                               for: "DeleteApplyJob",
@@ -400,7 +417,9 @@ export default function ActionPage({
                         }
                       }}
                     >
-                      {applyValue.id ? "Hủy ứng tuyển" : "Ứng tuyển"}
+                      {applyValue.id && applyValue.status === "pending"
+                        ? "Hủy ứng tuyển"
+                        : "Ứng tuyển"}
                     </button>
                   )}
                 </div>

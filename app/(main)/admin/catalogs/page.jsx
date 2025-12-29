@@ -4,5 +4,5 @@ import { getAllCatalog } from "../getData";
 
 export default async function CatalogPage() {
   const listCatalog = await getAllCatalog();
-  return <ListCatalog listCatalogs={listCatalog.catalogs} />;
+  return <ListCatalog listCatalogs={listCatalog} />;
 }

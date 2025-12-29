@@ -26,6 +26,7 @@ export const yearList = (limitList = 30) => {
 };
 
 export const formatDate = (stringDate) => {
+  if (!stringDate) return stringDate;
   const formattedDate = format(new Date(stringDate), "dd/MM/yyyy");
   return formattedDate;
 };

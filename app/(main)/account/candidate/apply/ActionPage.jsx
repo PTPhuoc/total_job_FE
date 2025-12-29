@@ -11,6 +11,7 @@ import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { listStatusApply } from "../../getData";
 
 export default function ActionPage({ applies }) {
   const windowWarning = useSelector((state) => state.windowWarning);
@@ -102,6 +103,11 @@ export default function ActionPage({ applies }) {
       .catch((err) => console.log(err));
   };
 
+  const getStatusApply = (key) => {
+    const status = listStatusApply.find(item => item.key === key)
+    return status.name
+  }
+
   useEffect(() => {
     dispatch(setWeb({ load: false }));
   }, []);
@@ -158,12 +164,18 @@ export default function ActionPage({ applies }) {
           {listApplies.map((item, index) => (
             <div
               key={index}
-              className="flex gap-5 p-5 min-w-0 items-center bg-white rounded-lg shadow-basic"
+              className="flex gap-5 p-5 min-w-0 items-center bg-white border-2 border-white rounded-lg shadow-basic cursor-pointer duration-200 ease-in hover:border-[#01215c]"
             >
               <div className="flex-1 flex flex-col gap-2 min-w-0">
-                <div className="flex self-start items-center px-5 gap-3 bg-zinc-400 text-white rounded-lg">
+                <div className="flex items-center gap-5">
+                  <div className="flex self-start items-center px-5 gap-3 bg-zinc-400 text-white rounded-lg">
                   <p>Ngày nộp:</p>
                   <p>{formatDate(item.dateCreate)}</p>
+                </div>
+                <div className="flex self-start items-center px-5 gap-3 bg-zinc-400 text-white rounded-lg">
+                  <p>Trạng thái:</p>
+                  <p>{getStatusApply(item.status)}</p>
+                </div>
                 </div>
                 <div className="flex items-center gap-3 min-w-0">
                   <p className="px-5 shrink-0 bg-zinc-400 text-white rounded-lg">
@@ -180,6 +192,7 @@ export default function ActionPage({ applies }) {
                     {item.job.name}
                   </Link>
                 </div>
+                <hr className="h-1 bg-[#01215c] rounded-2xl"></hr>
                 <div className="flex items-center gap-3 min-w-0">
                   <p className="px-5 shrink-0 bg-zinc-400 text-white rounded-lg">
                     Nội dung:
@@ -191,7 +204,12 @@ export default function ActionPage({ applies }) {
               </div>
               <div className="flex justify-stretch flex-col gap-2">
                 <button
-                  className="px-5 py-1 bg-[#01215C] text-white border-2 border-[#01215C] rounded-lg duration-200 ease-in hover:bg-white hover:text-[#01215C]"
+                  disabled={!(item.status === "pending")}
+                  className={
+                    item.status === "pending"
+                      ? "px-5 py-1 bg-[#01215C] text-white border-2 border-[#01215C] rounded-lg duration-200 ease-in hover:bg-white hover:text-[#01215C]"
+                      : "px-5 py-1 bg-zinc-400 text-white border-2 border-zinc-400 rounded-lg duration-200 ease-in"
+                  }
                   onClick={() => {
                     setApplyValue({ id: item.id, decryption: item.decryption });
                     setIsOpen({ ...isOpen, changeDesc: true });
@@ -200,7 +218,12 @@ export default function ActionPage({ applies }) {
                   Sửa nội dung
                 </button>
                 <button
-                  className="px-5 py-1 bg-red-500 text-white border-2 border-red-500 rounded-lg duration-200 ease-in hover:bg-white hover:text-red-500"
+                  disabled={!(item.status === "pending")}
+                  className={
+                    item.status === "pending"
+                      ? "px-5 py-1 bg-red-500 text-white border-2 border-red-500 rounded-lg duration-200 ease-in hover:bg-white hover:text-red-500"
+                      : "px-5 py-1 bg-zinc-400 text-white border-2 border-zinc-400 rounded-lg duration-200 ease-in"
+                  }
                   onClick={() => {
                     setApplyValue({ id: item.id, decryption: item.decryption });
                     dispatch(

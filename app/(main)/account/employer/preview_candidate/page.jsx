@@ -7,7 +7,7 @@ export default async function page({ searchParams}) {
   const params = await searchParams
     const token = (await cookies()).get("accessToken")?.value
     const profile = await getProfileCandidate(token, params.id)
-    console.log(profile)
+    
   return (
     <ActionPage profile={profile}/>
   )

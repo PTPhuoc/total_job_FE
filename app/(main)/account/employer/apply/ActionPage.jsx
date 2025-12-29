@@ -5,10 +5,16 @@ import { setWeb } from "@/app/store/slices/webSlice";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { listStatusApply } from "../../getData";
 
 export default function ActionPage({ applies }) {
   const dispatch = useDispatch();
   const [listApplies, setListApplies] = useState(applies);
+
+  const getStatusApply = (key) => {
+      const status = listStatusApply.find(item => item.key === key)
+      return status.name
+    }
 
   useEffect(() => {
     dispatch(setWeb({ load: false }));
@@ -44,7 +50,7 @@ export default function ActionPage({ applies }) {
                         Tuyển dụng:
                       </p>
                       <p className="px-5 shrink-0 bg-zinc-400 text-white rounded-lg">
-                        Địa chỉ:
+                        Trạng thái:
                       </p>
                     </div>
                     <div className="flex flex-col gap-2">
@@ -58,7 +64,7 @@ export default function ActionPage({ applies }) {
                       >
                         {item.job.name}
                       </Link>
-                      <p>{item.job.address}</p>
+                      <p>{getStatusApply(item.status)}</p>
                     </div>
                   </div>
                 </div>
@@ -76,7 +82,7 @@ export default function ActionPage({ applies }) {
                 <Link
                   className="px-5 py-1 bg-[#01215C] text-white border-2 border-[#01215C] rounded-lg duration-200 ease-in hover:bg-white hover:text-[#01215C]"
                   onClick={() => {dispatch(setWeb({load: true}))}}
-                  href={`/account/employer/preview_candidate?id=${item.account.id}`}
+                  href={`/account/employer/preview_candidate?id=${item.id}`}
                 >
                   Xem hồ sơ
                 </Link>

@@ -1,16 +1,25 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import AccountImage1 from "@/app/assets/Image_Account_1.jpg";
 import { usePathname, useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setWindowWarning } from "@/app/store/slices/windowSlice";
+import { setWeb } from "@/app/store/slices/webSlice";
+import { checkNotify } from "@/app/store/slices/notifySlice";
 
 export default function MenuBar() {
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const pathUrl = usePathname();
   const route = useRouter();
+
+  useEffect(() => {
+      dispatch(checkNotify())
+      dispatch(setWeb({ load: false }));
+  }, []);
+
   return (
     <>
       <div className="flex flex-col gap-5 items-stretch">

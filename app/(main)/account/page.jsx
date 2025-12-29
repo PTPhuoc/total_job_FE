@@ -15,9 +15,13 @@ export default function page() {
 
   const changeRole = (role) => {
     axios
-      .patch(`${process.env.NEXT_PUBLIC_SERVER_PORT}api/account/change_role/`, {
-        role: role,
-      }, {withCredentials: true})
+      .patch(
+        `${process.env.NEXT_PUBLIC_SERVER_PORT}api/account/change_role/`,
+        {
+          role: role,
+        },
+        { withCredentials: true }
+      )
       .then((rs) => {
         if (rs.data.status === "Success") {
           dispatch(setWeb({ load: true }));
@@ -39,19 +43,34 @@ export default function page() {
         console.log(err);
       })
       .finally(() => {
-        dispatch(decodeToken());
+        dispatch(decodeToken()).then((action) => {
+          if (decodeToken.fulfilled.match(action)) {
+            if (action.payload.role === "Candidate")
+              route.push(`/account/candidate`);
+            if (action.payload.role === "Employer")
+              route.push(`/account/employer`);
+            if (action.payload.role === "Admin") route.push("/admin");
+          }
+        });
       });
   };
 
   useEffect(() => {
-    if (user.role === "Pending") {
-      dispatch(setWeb({ load: false }));
-    } else {
-      if (user.role === "Candidate") route.push(`/account/candidate`);
-      if (user.role === "Employer") route.push(`/account/employer`);
-      if (user.role === "Admin") route.push("/admin")
-    }
-  }, [user.role]);
+    dispatch(decodeToken()).then((action) => {
+      if (decodeToken.fulfilled.match(action)) {
+        if (!action.payload.role) route.push("/");
+        if (action.payload.role === "Pending") {
+          dispatch(setWeb({ load: false }));
+        } else {
+          if (action.payload.role === "Candidate")
+            route.push(`/account/candidate`);
+          if (action.payload.role === "Employer")
+            route.push(`/account/employer`);
+          if (action.payload.role === "Admin") route.push("/admin");
+        }
+      }
+    });
+  }, []);
 
   return (
     <div className="pt-[100px] w-full h-[800px] flex justify-center items-center bg-zinc-200">

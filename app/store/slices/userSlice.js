@@ -12,6 +12,7 @@ export const decodeToken = createAsyncThunk("user/decodeToken", async () => {
       return rs.data.tokenJwt;
     } else {
       return {
+        id: "",
         name: "",
         email: "",
         role: "",
@@ -21,6 +22,7 @@ export const decodeToken = createAsyncThunk("user/decodeToken", async () => {
   } catch (err) {
     console.log(err);
     return {
+      id: "",
       name: "",
       email: "",
       role: "",
@@ -32,6 +34,7 @@ export const decodeToken = createAsyncThunk("user/decodeToken", async () => {
 const userSlice = createSlice({
   name: "user",
   initialState: {
+    id: "",
     name: "",
     email: "",
     role: "",
@@ -48,7 +51,8 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(decodeToken.fulfilled, (state, action) => {
       if (action.payload) {
-        state.name = action.payload.name ? action.payload.name : "";
+        state.id = action.payload.id ?? ""
+        state.name = action.payload.name ?? "";
         state.email = action.payload.email;
         state.role = action.payload.role;
         state.expiresIn = action.payload.exp;

@@ -95,7 +95,7 @@ export const checkApply = async (token, id) => {
       return "";
     }
     const responseValue = await response.json();
-    if (responseValue.status === "Success") return responseValue.appliedId;
+    if (responseValue.status === "Success") return responseValue.applied;
     else return "";
   } catch (err) {
     console.log(err);
@@ -105,7 +105,7 @@ export const checkApply = async (token, id) => {
 
 export const checkValue = [
   { score: 100, color: "#3ECC25", text: "An toàn" },
-  { score: 80, color: "#9FCC25", text: "Tạm ổn" },
+  { score: 90, color: "#9FCC25", text: "Tạm ổn" },
   { score: 60, color: "#CCB925", text: "Nghi ngờ" },
   { score: 40, color: "#CC8125", text: "Cẩn thận" },
   { score: 20, color: "#CC5425", text: "Nguy hiểm" },

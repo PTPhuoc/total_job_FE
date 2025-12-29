@@ -25,7 +25,7 @@ export default function ActionPage({ listAccount }) {
     totalPage: listAccount.totalPages,
   });
   const [changePassword, setChangPassword] = useState({
-    isOpen: true,
+    isOpen: false,
     email: "",
     password: "",
     confirmPassword: "",
@@ -39,7 +39,7 @@ export default function ActionPage({ listAccount }) {
             ...searchValue,
           }),
           page: page,
-        },
+        }, withCredentials: true
       })
       .then((rs) => {
         if (rs.data.status === "Success") {
@@ -266,9 +266,9 @@ export default function ActionPage({ listAccount }) {
                       e.stopPropagation();
                       dispatch(
                         setWindowWarning({
-                          for: "DeleteJobByAdmin",
-                          title: "Xóa tuyển dụng",
-                          content: `Bạn có chắc muốn xóa tuyển dụng ${item.name}`,
+                          for: "DeleteAccountByAdmin",
+                          title: "Xóa tài khoản",
+                          content: `Bạn có chắc muốn xóa tài khoản ${item.name}`,
                           handle: "pending",
                           type: "YorN",
                           isOpen: true,
@@ -323,11 +323,11 @@ export default function ActionPage({ listAccount }) {
           </button>
           <button
             className={
-              changePage.page === changePage.totalPage
+              changePage.page >= changePage.totalPage
                 ? "w-[50px] h-[50px] bg-white rounded-full p-2 fill-zinc-500 border-2 border-zinc-500"
                 : "w-[50px] h-[50px] bg-[#01215c] rounded-full p-2 fill-white border-2 border-[#01215c] duration-200 ease-in hover:bg-white hover:fill-[#01215c]"
             }
-            disabled={changePage.page === changePage.totalPage}
+            disabled={changePage.page >= changePage.totalPage}
             onClick={() => {
               searchAccount(changePage.page + 1);
             }}

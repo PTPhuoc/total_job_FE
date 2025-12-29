@@ -4,7 +4,6 @@ import { getInfoChart } from './getData'
 
 export default async function page() {
   const infoChart = await getInfoChart()
-  console.log(infoChart)
   return (
     <ActionPage infoChart={infoChart}/>
   )

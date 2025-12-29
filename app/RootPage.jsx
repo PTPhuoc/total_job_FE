@@ -3,14 +3,15 @@
 import React from "react";
 import Header from "./Header";
 import { useSelector } from "react-redux";
-import { usePathname } from "next/navigation";
 import WindowShow from "./WindowShow";
 import Footer from "./Footer";
+import { usePathname } from "next/navigation";
 
 export default function RootPage({ children }) {
   const isWeb = useSelector((state) => state.web);
   const windowWarning = useSelector((state) => state.windowWarning);
-  const pathname = usePathname();
+  const pathname = usePathname()
+
   return (
     <>
       {isWeb.load && (

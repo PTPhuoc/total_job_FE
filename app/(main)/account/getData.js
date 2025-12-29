@@ -156,7 +156,7 @@ export const getAllApplies = async (token) => {
 
 export const getProfileCandidate = async (token, id) => {
   try {
-    if(!token || !id) return {}
+    if (!token || !id) return {};
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_PORT}api/account/preview_candidate/?id=${id}`,
       { method: "GET", headers: { cookie: `accessToken=${token}` } }
@@ -166,10 +166,17 @@ export const getProfileCandidate = async (token, id) => {
       return {};
     }
     const responeValue = await response.json();
-    if (responeValue.status === "Success") return responeValue.candidateProfile;
+    if (responeValue.status === "Success") return responeValue;
     return {};
   } catch (err) {
-    console.log(err)
-    return {}
+    console.log(err);
+    return {};
   }
-}
+};
+
+export const listStatusApply = [
+  { key: "pending", name: "Chưa xem" },
+  { key: "seen", name: "Đã xem" },
+  { key: "accept", name: "Đã duyệt" },
+  { key: "reject", name: "Từ chối" },
+];

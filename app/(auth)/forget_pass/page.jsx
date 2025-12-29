@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 import InputCode from "./InputCode";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setLoad } from "@/app/store/slices/webSlice";
+import { setWeb } from "@/app/store/slices/webSlice";
+import { setWindowWarning } from "@/app/store/slices/windowSlice";
 
 export default function page() {
   const dispatch = useDispatch()
@@ -32,7 +33,7 @@ export default function page() {
 
   const sendCode = () => {
     axios
-      .post("http://127.0.0.1:8000/api/auth/send_code/", {
+      .post(`${process.env.NEXT_PUBLIC_SERVER_PORT}api/auth/send_code/`, {
         email: infor.email,
         type: "Forgot",
       })
@@ -59,7 +60,7 @@ export default function page() {
 
   const verifyCode = () => {
     axios
-      .post("http://127.0.0.1:8000/api/auth/verify_code/", {
+      .post(`${process.env.NEXT_PUBLIC_SERVER_PORT}api/auth/verify_code/`, {
         email: infor.email,
         code: infor.code.toString(),
       })
@@ -86,22 +87,23 @@ export default function page() {
 
   const changePass = () => {
     axios
-      .post("http://127.0.0.1:8000/api/auth/change_password_forget/", {
+      .post(`${process.env.NEXT_PUBLIC_SERVER_PORT}api/auth/change_password_forget/`, {
         email: infor.email,
         password: infor.password,
       })
       .then((rs) => {
         if (rs.data.status === "Success") {
-          dispatch(setLoad(true))
-          setWindowWarning({
+          dispatch(setWeb({load: true}))
+          dispatch(setWindowWarning({
             for: "SuccessChangePass",
             title: "Thông báo",
-            content: "Đổi mật khẩu thành công",
+            content: "Đổi mật khẩu thành công. Hãy đăng nhập lại!",
             type: "N",
             handle: "pending",
             isOpen: true,
             value: "",
-          });
+          }))
+          ;
           router.push("/signin");
         } else {
           console.log(rs.data.message ? rs.data.message : rs.data.error);
@@ -111,7 +113,7 @@ export default function page() {
   };
 
   useEffect(() => {
-    dispatch(setLoad(false));
+    dispatch(setWeb({load: false}));
   }, []);
 
   useEffect(() => {
@@ -287,6 +289,7 @@ export default function page() {
             className="w-full h-full object-cover"
             alt=""
             src={signinBG}
+            priority
           ></Image>
         </div>
       </div>

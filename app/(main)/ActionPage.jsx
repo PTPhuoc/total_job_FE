@@ -435,11 +435,11 @@ export default function ActionPage({
           </button>
           <button
             className={
-              changePage.page === changePage.totalPage
+              changePage.page >= changePage.totalPage
                 ? "w-[50px] h-[50px] bg-white rounded-full p-2 fill-zinc-500 border-2 border-zinc-500"
                 : "w-[50px] h-[50px] bg-[#01215c] rounded-full p-2 fill-white border-2 border-[#01215c] duration-200 ease-in hover:bg-white hover:fill-[#01215c]"
             }
-            disabled={changePage.page === changePage.totalPage}
+            disabled={changePage.page >= changePage.totalPage}
             onClick={() => {
               searchJob(changePage.page + 1);
             }}

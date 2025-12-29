@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 
 export default function ActionPage({ saveJobValue }) {
   const dispatch = useDispatch();
-  const route = useRouter()
+  const route = useRouter();
   const [listSaveJob, setListSaveJob] = useState(saveJobValue);
 
   const getSaveJob = async () => {
@@ -76,12 +76,13 @@ export default function ActionPage({ saveJobValue }) {
             key={index}
             className="flex items-center gap-3 bg-white border-2 border-white p-5 rounded-2xl shadow-basic min-w-0 duration-200 ease-in hover:border-[#01215C]"
             onClick={() => {
-              dispatch(setWeb({load: true}))
-              route.push(`/job_detail?id=${item.job.id}`)
+              dispatch(setWeb({ load: true }));
+              route.push(`/job_detail?id=${item.job.id}`);
             }}
           >
             <div className="flex flex-1 flex-col gap-3 min-w-0">
-                <p className="font-bold truncate">
+              <p className="font-bold truncate">
+                {item.job.sourceLink ? (
                   <Link
                     href={item.job.sourceLink}
                     target="_blank"
@@ -90,8 +91,14 @@ export default function ActionPage({ saveJobValue }) {
                   >
                     {item.job.sourceName}
                   </Link>
-                  {item.job.name}
-                </p>
+                ) : (
+                  <span className="self-start font-normal bg-[#009DFF] border-2 border-[#009DFF] rounded-md text-white px-2 mr-2 duration-200 ease-in hover:bg-white hover:text-[#009DFF]">
+                    {item.job.sourceName}
+                  </span>
+                )}
+
+                {item.job.name}
+              </p>
               <div className="flex items-center gap-5 self-start">
                 <div className="flex items-center px-5 gap-3 bg-zinc-400 text-white rounded-lg">
                   <p>Hạn nộp:</p>
