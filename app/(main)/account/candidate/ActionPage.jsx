@@ -105,27 +105,25 @@ export default function ActionPage({
     let check = false;
 
     if (account.candidate) {
-      Object.entries(inputValue).forEach(([key, value]) => {
-        const matchValue1 = account.candidate[key]
-          ? account.candidate[key]
-          : "";
-        const matchValue2 = value ? value : "";
+      for (const [key, value] of Object.entries(inputValue)) {
+        if (key === "image" || key === "decryption") continue;
+        const matchValue1 = account.candidate[key] ?? ""
+        const matchValue2 = value ?? "";
         if (matchValue2.trim() !== matchValue1.trim()) {
           check = true;
         }
-      });
+      }
     }
     return check;
   };
 
-  const saveChange = async (otherValue) => {
+  const saveInfo = async () => {
     return axios
       .put(
         `${process.env.NEXT_PUBLIC_SERVER_PORT}api/account/save_candidate/`,
         {
-          valueChange: otherValue
-            ? { ...otherValue }
-            : { candidate: { ...inputValue } },
+          valueChange: 
+            { candidate: { ...inputValue } },
         },
         { withCredentials: true }
       )
@@ -133,6 +131,41 @@ export default function ActionPage({
         if (rs.data.status === "Success") {
           setAccount({ ...rs.data.updatedAccount });
           setInputValue({ ...rs.data.updatedAccount.candidate });
+          setEducation(rs.data.updatedAccount.education ?? []);
+          setExp(rs.data.updatedAccount.exp ?? []);
+          setProject(rs.data.updatedAccount.project ?? []);
+        } else {
+          dispatch(
+            setWindowWarning({
+              for: rs.data.status,
+              title: rs.data.status,
+              content: rs.data.message,
+              handle: "pending",
+              type: "N",
+              isOpen: true,
+            })
+          );
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() =>
+        setIsOpen({ education: false, exp: false, project: false })
+      );
+  }
+
+  const saveList = async (otherValue) => {
+    return axios
+      .put(
+        `${process.env.NEXT_PUBLIC_SERVER_PORT}api/account/save_candidate/`,
+        {
+          valueChange: otherValue
+        },
+        { withCredentials: true }
+      )
+      .then((rs) => {
+        if (rs.data.status === "Success") {
           setEducation([...rs.data.updatedAccount.education] ?? []);
           setExp([...rs.data.updatedAccount.exp] ?? []);
           setProject([...rs.data.updatedAccount.project] ?? []);
@@ -172,11 +205,9 @@ export default function ActionPage({
       )
       .then((rs) => {
         if (rs.data.status === "Success") {
-          setAccount({ ...rs.data.updatedAccount });
-          setInputValue({ ...rs.data.updatedAccount.candidate });
-          setEducation([...rs.data.updatedAccount.education] ?? []);
-          setExp([...rs.data.updatedAccount.exp] ?? []);
-          setProject([...rs.data.updatedAccount.project] ?? []);
+          setEducation(rs.data.updatedAccount.education ?? []);
+          setExp(rs.data.updatedAccount.exp ?? []);
+          setProject(rs.data.updatedAccount.project ?? []);
         } else {
           dispatch(
             setWindowWarning({
@@ -247,9 +278,9 @@ export default function ActionPage({
         if (rs.data.status === "Success") {
           setAccount({ ...rs.data.updatedAccount });
           setInputValue({ ...rs.data.updatedAccount.candidate });
-          setEducation([...rs.data.updatedAccount.education] ?? []);
-          setExp([...rs.data.updatedAccount.exp] ?? []);
-          setProject([...rs.data.updatedAccount.project] ?? []);
+          setEducation(rs.data.updatedAccount.education ?? []);
+          setExp(rs.data.updatedAccount.exp ?? []);
+          setProject(rs.data.updatedAccount.project ?? []);
         } else {
           dispatch(
             setWindowWarning({
@@ -277,7 +308,7 @@ export default function ActionPage({
     }${endYear}`;
   };
 
-  const isChange = checkChange()
+  const isChange = checkChange();
 
   useEffect(() => {
     dispatch(setWeb({ load: false }));
@@ -290,6 +321,8 @@ export default function ActionPage({
           await deleteInfoCandidate({ educationId: windowWarning.value });
         } else if (windowWarning.for === "DeleteExperience") {
           await deleteInfoCandidate({ expId: windowWarning.value });
+        }else if (windowWarning.for === "DeleteProject") {
+          await deleteInfoCandidate({ projectId: windowWarning.value });
         }
         dispatch(setDefaultWindowWarning());
       }
@@ -306,7 +339,7 @@ export default function ActionPage({
           listEdu={listEdu}
           isOpen={(value) => setIsOpen({ ...isOpen, education: value })}
           handleAccept={(value) => {
-            return saveChange({
+            return saveList({
               education: { ...value, accountId: account.id },
             });
           }}
@@ -319,7 +352,7 @@ export default function ActionPage({
           listFormOfWork={listFormOfWork}
           isOpen={(value) => setIsOpen({ ...isOpen, exp: value })}
           handleAccept={(value) => {
-            return saveChange({ exp: { ...value, accountId: account.id } });
+            return saveList({ exp: { ...value, accountId: account.id } });
           }}
         />
       )}
@@ -711,10 +744,11 @@ export default function ActionPage({
               : "py-1 bg-zinc-400 text-white border-2 border-zinc-400 rounded-xl duration-200 ease-in"
           }
           classNameWait="py-1 bg-[#01215C] rounded-xl border-2 border-[#01215C] scale-100 duration-200 ease-in"
-          handleApi={() => {return saveChange()}}
+          handleApi={() => {
+            return saveInfo();
+          }}
           textButton={"Lưu thay đổi"}
-        >
-        </ButtonDefault>
+        ></ButtonDefault>
       </div>
     </>
   );

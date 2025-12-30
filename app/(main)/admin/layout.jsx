@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { setWindowWarning } from "@/app/store/slices/windowSlice";
 
 export default function AdminLayout({ children }) {
   const user = useSelector((state) => state.user);
@@ -56,16 +57,25 @@ export default function AdminLayout({ children }) {
         >
           Lấy dữ liệu
         </Link>
-        <Link
+        <button
           href={"/signin"}
-          className="w-full p-5 bg-red-500 text-white border-y-2 border-red-500 scale-100 duration-200 ease-in hover:bg-white hover:text-red-500 active:scale-95"
+          className="w-full p-5 text-left bg-red-500 text-white border-y-2 border-red-500 scale-100 duration-200 ease-in hover:bg-white hover:text-red-500 active:scale-95"
           onClick={() => {
-            dispatch(logout());
-            dispatch(setWeb({ load: true }));
+            dispatch(
+              setWindowWarning({
+                for: "LogOut",
+                title: "Đăng xuất",
+                content: "Bạn có chắc muốn đăng xuất",
+                handle: "pending",
+                type: "YorN",
+                isOpen: true,
+                value: "",
+              })
+            );
           }}
         >
           Đăng xuất
-        </Link>
+        </button>
       </div>
       <div className="w-1 h-full bg-[#01215C]"></div>
       <div className="flex-8 min-w-0 bg-zinc-100">{children}</div>

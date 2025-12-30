@@ -21,11 +21,9 @@ export default function ActionPage({ accountInfor }) {
   const [inputValue, setInputValue] = useState(() => {
     if (account && account.employer) {
       return {
-        name: account.employer.name ? account.employer.name : "",
-        image: account.employer.image ? account.employer.image : "",
-        decryption: account.employer.decryption
-          ? account.employer.decryption
-          : "",
+        name: account.employer.name ?? "",
+        image: account.employer.image ?? "",
+        decryption: account.employer.decryption ?? "",
       };
     }
     return {

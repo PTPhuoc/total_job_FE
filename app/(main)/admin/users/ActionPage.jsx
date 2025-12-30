@@ -268,7 +268,7 @@ export default function ActionPage({ listAccount }) {
                         setWindowWarning({
                           for: "DeleteAccountByAdmin",
                           title: "Xóa tài khoản",
-                          content: `Bạn có chắc muốn xóa tài khoản ${item.name}`,
+                          content: `Bạn có chắc muốn xóa tài khoản ${item.email}`,
                           handle: "pending",
                           type: "YorN",
                           isOpen: true,
